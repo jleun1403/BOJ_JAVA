@@ -1,2 +1,2 @@
 # BOJ_JAVA
-BOJ_SRC_JAVA
+BOJ_SRC_Java
