@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class Q1463 {
+class Q1463_2 {
     public static void main(String[] args) {
         int D[] = new int[1000001];
         D[2] = D[3] = 1;
