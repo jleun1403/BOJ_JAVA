@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class Q15683 {
-    static int n, m, arr[][], answer, result[], copy[][];
-    static ArrayList<Position>list;
+    static int n, m, cnum, arr[][], answer, result[], copy[][];
+    static Position list[];
     static int dx[] = {-1, 0, 1, 0}, dy[] = {0, 1, 0, -1};
     static class Position{
         int x, y, num;
@@ -16,32 +16,63 @@ public class Q15683 {
             this.num = num;
         }
     }
-    public static void solve(){
-        for(int i=0; i<list.size(); i++){
-
+    public static void move(int x, int y, int d){
+        int temp = copy[x][y];
+        while(true){
+            x+= dx[d];
+            y+= dy[d];
+            if(x>=0 && x<n && y>=0 && y<m && copy[x][y]!=6) copy[x][y] = temp;
+            else break;
         }
     }
+    public static void solve(){
+        for(int i=0; i<n; i++){
+            for(int j=0; j<m; j++){
+                copy[i][j] = arr[i][j];
+            }
+        }
+        for(int i=0; i<cnum; i++){
+            int num = list[i].num;
+            int x = list[i].x;
+            int y = list[i].y;
+            if(num ==1){
+                move(x,y,result[i]);
+            }
+            else if(num==2){
+                move(x,y,result[i]);
+                move(x,y,(result[i]+2)%4);
+            }
+            else if(num ==3){
+                move(x,y,result[i]);
+                move(x,y,(result[i]+1)%4);
+            }
+            else if(num ==4){
+                move(x,y,result[i]);
+                move(x,y,(result[i]+1)%4);
+                move(x,y,(result[i]+3)%4);
+            }
+            else if(num ==5){
+                move(x,y,result[i]);
+                move(x,y,(result[i]+1)%4);
+                move(x,y,(result[i]+2)%4);
+                move(x,y,(result[i]+3)%4);
+            }
+        }
+        int sum =0;
+        for(int i=0; i<n; i++){
+            for(int j=0; j<m; j++){
+                if(copy[i][j] == 0) sum+=1;
+            }
+        }
+        answer= Math.min(answer, sum);
+    }
     public static void go(int index){
-        if(index == list.size()){
-            for(int i=0; i<n; i++){
-                for(int j=0; j<m; j++){
-                    copy[i][j] = arr[i][j];
-                }
-            }
-            for(int i=0 ; i<list.size(); i++){
-                if(result[i] == 1){
-
-                }
-            }
+        if(index == cnum){
+            solve();
             return;
         }
-        for(int i=0; i<list.size(); i++){
-            if(list.get(index).num!=5){
-                for(int k=0; k<4; k++){
-                    result[index] = k;
-                }
-            }
-            else result[index] = 5;
+        for(int i=0; i<4; i++){
+            result[index] = i;
             go(index+1);
         }
     }
@@ -52,18 +83,21 @@ public class Q15683 {
         m = Integer.parseInt(st.nextToken());
         arr = new int[n][m];
         copy = new int [n][m];
-        answer=0;
-        int cnum = 0;
-        list = new ArrayList<>();
+        answer=Integer.MAX_VALUE;
+        cnum = 0;
+        list = new Position[8];
         for(int i=0; i<n; i++){
             int cnt =0;
             String s[] = br.readLine().split(" ");
             for(int j=0; j<m; j++){
                 arr[i][j] = Integer.parseInt(s[j]);
-                if(arr[i][j]>=1 && arr[i][j]<=5) list.add(new Position(i,j, arr[i][j]));
+                if(arr[i][j]>=1 && arr[i][j]<=5) {
+                    list[cnum++] = new Position(i,j, arr[i][j]);
+                }
             }
         }
-        result = new int[list.size()];
+        result = new int[cnum];
         go(0);
+        System.out.println(answer);
     }
 }
