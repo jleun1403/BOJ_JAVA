@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
 
-public class A_Problem {
+class A_Problem {
     public static int arr[], arr2[], n, answer;
     public static HashSet<String> set;
 
