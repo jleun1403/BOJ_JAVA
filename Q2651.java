@@ -7,34 +7,19 @@ import java.util.LinkedList;
 import java.util.StringTokenizer;
 
 public class Q2651 {
-    static int n, maxlength, arr[], time[], total[], mintime, mincnt;
+    static int n, maxlength, arr[], time[], total[], mintime, parent[], mincnt;
     static LinkedList<Integer> list;
     static boolean check[];
-
-    static void go(int index, int t) {
-        if (t >= mintime)
-            return;
-        if (index == n + 1) {
-            if (mintime > t) {
-                mintime = t;
-                list = new LinkedList<>();
-                for (int i = 1; i <= n; i++) {
-                    if (check[i])
-                        list.add(i);
-                }
-            }
-
+    static void print(int x){
+        if(x <=0) {
+            mincnt+=1;
+            System.out.println(mincnt);
             return;
         }
-        for (int i = index; i <= n + 1; i++) {
-            if (!check[i]) {
-                if (total[i] - total[index] <= maxlength) {
-                    check[i] = true;
-                    go(i, t + time[i]);
-                    check[i] = false;
-                }
-            }
-        }
+        mincnt+=1;
+        print(parent[x]);
+        System.out.printf(x+" ");
+
     }
 
     public static void main(String[] args) throws NumberFormatException, IOException {
@@ -45,6 +30,7 @@ public class Q2651 {
         total = new int[n + 2];
         time = new int[n + 2];
         check = new boolean[n + 2];
+        int d[] = new int[n+2];
         StringTokenizer st = new StringTokenizer(br.readLine());
         int cnt = 1;
         while (st.hasMoreElements()) {
@@ -60,15 +46,27 @@ public class Q2651 {
             time[cnt++] = Integer.parseInt(st.nextToken());
         }
         time[n + 1] = 0;
+        int parent[] = new int[n+2];
         mintime = Integer.MAX_VALUE;
-        go(0, 0);
-        System.out.println(mintime);
-        int size = list.size();
-        System.out.println(list.size());
-        for (int i = 0; i < size; i++) {
-            System.out.printf(list.poll() + " ");
+//        go(0, 0);
+        for(int i=1; i<=n+1; i++) d[i] = Integer.MAX_VALUE;
+        parent= new int[n+2];
+        for(int i=1; i<=n+1; i++){
+            int index=0;
+            for(int j=i-1; j>=0;j--){
+                if(total[i]-total[j]<maxlength){
+                    if(d[i]<d[j]+time[j]){
+                        d[i] = d[j]+time[j];
+                        index = j;
+                    }
+                }
+            }
+            parent[i] = index;
         }
-        System.out.println();
+        System.out.println(d[n+1]);
+        if(d[n+1]!=0){
+            print(n+1);
+        }
     }
 
 }

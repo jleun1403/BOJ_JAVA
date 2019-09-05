@@ -1,94 +1,108 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Q16236 {
-    static int dx[] = {-1, 0,0,1}, dy[] = {0,-1,1,0}, d[][], n, arr[][];
-    static boolean check[][];
-    public static void bfs(int x, int y){
-        d[x][y] = 1;
-        check[x][y] = true;
-        for(int k=0; k<4; k++){
-            int nx = x + dx[k];
-            int ny = y = dy[k];
-            if(nx>=0 && nx<n && ny>=0 && ny<n){
+    static int n, arr[][], sharksize, curx, cury, d[][], dx[] = { -1, 1, 0, 0 }, dy[] = { 0, 0, -1, 1 };
 
+    static class Position {
+        int x, y;
+
+        public Position(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    public static void bfs(int x, int y) { //
+        Queue<Position> q = new LinkedList<>();
+        q.add(new Position(x, y));
+        d[x][y] = 1;
+        int mind = Integer.MAX_VALUE;
+        while (!q.isEmpty()) {
+            Position p = q.poll();
+            int cx = p.x;
+            int cy = p.y;
+            for (int k = 0; k < 4; k++) {
+                int nx = cx + dx[k];
+                int ny = cy + dy[k];
+                if (nx >= 0 && nx < n && ny >= 0 && ny < n) {
+                    if (d[nx][ny] ==0 && (arr[nx][ny] == 0 || arr[nx][ny] <= sharksize)) {
+                        d[nx][ny] = d[cx][cy] + 1;
+                        q.add(new Position(nx, ny));
+                    }
+                }
             }
         }
     }
-    public static void main(String[] args) throws IOException {
-        BufferedReader br= new BufferedReader(new InputStreamReader(System.in));
-        n =Integer.parseInt(br.readLine());
+
+    public static void main(String[] args) throws NumberFormatException, IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        n = Integer.parseInt(br.readLine());
         arr= new int[n][n];
-        int curx = 0, cury = 0;
-        int size = 2;
-        int fishnum =0;
-        for(int i=0; i<n; i++){
-            int cnt=0;
-            StringTokenizer st= new StringTokenizer(br.readLine());
-            while(st.hasMoreElements()){
+        int eat = 0;
+        sharksize = 2;
+        int answer =0;
+        for(int i=0; i<n; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int cnt = 0;
+            while(st.hasMoreElements()) {
                 int a= Integer.parseInt(st.nextToken());
-                arr[i][cnt] = a;
-                if(a==9){
-                    curx = i;
-                    cury = cnt;
+                arr[i][cnt]=a;
+                if(a==9) {
+                    curx = i; cury = cnt;
+                    //arr[curx][cury] = 0;
                 }
-                else if(a>=1 && a<=6) fishnum+=1;
                 cnt++;
             }
         }
-        int eat= 0;
-        boolean found = false;
-        boolean cango = false;
-        int time = 0;
-        while(true){
-            found = false;
-            d= new int[n][n];
-            check = new boolean[n][n];
-            bfs(curx, cury);
-            int min = 50;
-            int mx = 0, my = 0;
-            int cx= 0, cy = 0;
-            if(fishnum==0) break;
-            for(int k=0; k<4; k++) {
-                int nx = curx + dx[k];
-                int ny = cury + dy[k];
-                if (nx >= 0 && nx < n && ny >= 0 && ny < n) {
-                    if (arr[nx][ny] >= 1 && arr[nx][ny] <= arr[curx][cury]) { // 물고기가 있고 먹을 수 있으
-                        found = true; // 먹을 수 있는 물고기 발견.
-                        int d = Math.abs(nx - curx) + Math.abs(ny - cury);
-                        if (d < min) {
-                            mx = nx;
-                            my = ny;
-                            min = d;
+        int number=0;
+        while(true) {
+            d = new int[n][n];
+            bfs(curx, cury); //아기상어가 갈수 있는 루트.
+            int mindist = Integer.MAX_VALUE;
+            int minx = -1;
+            int miny = -1;
+            boolean found = false;
+            for(int i= 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    if(d[i][j]!=0 && arr[i][j]!=0 && arr[i][j] < sharksize) { //먹을 수 있는 물고기.
+                        found= true;// 먹을 수 있는 물고기 발견.
+                        if(mindist > d[i][j]) {
+                            mindist = d[i][j];
+                            minx = i;
+                            miny = j;
                         }
                     }
                 }
             }
-            System.out.println("time = " + time+ " "+found +" " + cango);
-            if(found == true){
-                arr[curx][cury] = 0;
-                curx = mx;
-                cury = my;
-                arr[curx][cury] = size;
-                eat+=1;
-                fishnum-=1;
+            if(found == false) break; // 먹을수 있는 물고기가 없으면 break.
+            arr[curx][cury] = 0; // 상어가 있던 곳도 빈칸으로.
+            arr[minx][miny] = 0; // 먹은칸은 빈칸으로.
+            curx = minx;
+            cury = miny;
+            eat+=1;
+
+            if(eat == sharksize) {
+                eat = 0;
+                sharksize+=1;
             }
-            if(eat == size){
-                size+=1;
-                eat=0;
-            }
-            time+=1;
-            for(int i=0; i<n; i++){
-                for(int j=0; j<n; j++){
-                    System.out.printf(arr[i][j] + " ");
-                }
-                System.out.println();
-            }
-            System.out.println(curx+" "+cury);
+            answer+= mindist-1;
         }
-        System.out.println(time);
+        System.out.println(answer);
     }
 
 }
+
+/*
+ * 6
+1 2 1 1 1 1
+1 3 6 2 2 3
+1 2 5 2 2 3
+3 3 2 4 6 3
+0 0 0 0 0 0
+0 0 0 1 1 9
+ */
