@@ -25,41 +25,37 @@ public class Q14503 {
             }
         }
         while (true) {
-            if (arr[curx][cury] == 0) { // 1번
+            if (arr[curx][cury] == 0) { // 1번 현재 위치 청소하기.
                 arr[curx][cury] = 2; // 청소완료
                 answer += 1;
             }
             int count = 0;
             boolean flag = false;
-            for (int k = 0; k < 4; k++) {
-                int nd = curd == 0 ? 3 : curd - 1;
-                if (arr[curx + dx[nd]][cury + dy[nd]] == 0) { // 2번 시작.
-                    curd = nd;
-                    curx += dx[nd];
-                    cury += dy[nd];
-                    flag = true;
-                    break;
-                } else { // arr[][] == 1 || ==2 : 청소가 되어있거나 벽이거나.
-                    count += 1;
-                    curd = nd;
-                    continue;
+            while(true){
+                for (int k = 0; k < 4; k++) {
+                    int nd = curd == 0 ? 3 : curd - 1; //
+                    if (arr[curx + dx[nd]][cury + dy[nd]] == 0) { // 2번 시작.
+                        curd = nd;
+                        curx += dx[nd];
+                        cury += dy[nd];
+                        flag = true;
+                        break; // 다시 1번부터 진행.
+                    } else { // arr[][] == 1 || ==2 : 청소가 되어있거나 벽이거나.
+                        curd = nd;
+                    }
                 }
+                if(flag == true) break;
                 int nx = curx - dx[curd];
                 int ny = cury - dy[curd];
-                if (arr[nx][ny] == 1) {
-                    flag = true;
-                    break;
+                if (arr[nx][ny] == 1) { // 후진해도 벽인 경우.
+                    System.out.println(answer);
+                    System.exit(0);
                 } else {
                     curx = nx;
                     cury = ny;
                 }
-
             }
-            if (flag == true)
-                break;
-
         }
-        System.out.println(answer);
 
     }
 
