@@ -7,16 +7,13 @@ import java.util.StringTokenizer;
 
 public class Q16236 {
     static int n, arr[][], sharksize, curx, cury, d[][], dx[] = { -1, 1, 0, 0 }, dy[] = { 0, 0, -1, 1 };
-
     static class Position {
         int x, y;
-
         public Position(int x, int y) {
             this.x = x;
             this.y = y;
         }
     }
-
     public static void bfs(int x, int y) { //
         Queue<Position> q = new LinkedList<>();
         q.add(new Position(x, y));

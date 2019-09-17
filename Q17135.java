@@ -73,7 +73,7 @@ public class Q17135 {
         }
         return cnt;
     }
-    public static void go(int index){
+    public static void go(int index, int before){
         if(index == 3){
             for(int i=0; i<n; i++) {
                 for (int j = 0; j < m; j++) {
@@ -83,16 +83,9 @@ public class Q17135 {
             answer = Math.max(answer, attack());
             return;
         }
-        for(int i=0; i<m; i++){
-            if(!check[i]){
-                if(index ==0 || (index >0 && result[index-1] < i)){
-                    check[i] = true;
-                    result[index] = i;
-                    go(index+1);
-                    check[i] = false;
-                }
-
-            }
+        for(int i=before; i<m; i++){
+            result[index] = i;
+            go(index+1, i+1);
         }
     }
     public static void main(String[] args) throws IOException {
@@ -113,7 +106,7 @@ public class Q17135 {
                 arr[i][cnt++] = Integer.parseInt(st.nextToken());
             }
         }
-        go(0);
+        go(0,0);
         System.out.println(answer);
     }
 }
