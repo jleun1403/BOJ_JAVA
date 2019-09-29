@@ -1,22 +1,35 @@
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class Q2156 {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        int n = scanner.nextInt();
-        int[] D = new int[n+1];
-        int[] Dnew = new int[n+1];
-        D[0] = 0;
-        for (int i = 1 ; i <= n ; i++)
-            D[i] = scanner.nextInt();
-        if (n >= 2)
-            Dnew[2] = D[2] + D[1];
-        Dnew[1] = D[1];
-        for (int i = 3 ; i <= n ; i++) {
-            int result = Math.max(D[i-1] + Dnew[i-3] + D[i], Math.max(Dnew[i-2] + D[i], Dnew[i-1]));
-            Dnew[i] = result;
+
+    public static void main(String[] args) throws NumberFormatException, IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
+        int arr[] = new int[n + 1];
+        for (int i = 1; i <= n; i++) {
+            arr[i] = Integer.parseInt(br.readLine());
         }
-        System.out.println(Dnew[n]);
+        int d[][] = new int[n + 1][2]; // 연속해서 마신 잔의 갯수
+        d[1][0] = 0;
+        d[1][1] = arr[1];
+        if (n == 1) {
+            System.out.println(arr[1]);
+        } else {
+            d[2][0] = arr[1];
+
+            d[2][1] = arr[1] + arr[2];
+            for (int i = 3; i <= n; i++) {
+                d[i][1] = Math.max(d[i - 2][0] + arr[i - 1], d[i - 1][0]) + arr[i];
+                d[i][0] = Math.max(d[i - 1][1], d[i - 1][0]);
+            }
+//        for(int i=1; i<=n; i++) {
+//        	System.out.println(d[i][1]+" "+ d[i][0]);
+//        }
+            System.out.println(Math.max(d[n][1], d[n][0]));
+        }
 
     }
+
 }
