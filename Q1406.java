@@ -1,4 +1,4 @@
-import java.util.*;
+kimport java.util.*;
 import java.io.*;
 
 public class Q1406{
